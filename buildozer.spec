@@ -1,47 +1,34 @@
-name: Build APK
+[app]
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+# (str) Title of your application
+title = Mobile App
 
-jobs:
-  build:
-    runs-on: ubuntu-22.04
+# (str) Package name
+package.name = mobileapp
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+# (str) Package domain
+package.domain = org.example
 
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y \
-          python3-pip \
-          python3-setuptools \
-          python3-venv \
-          git \
-          zip \
-          unzip \
-          openjdk-17-jdk
+# (str) Source code directory
+source.dir = .
 
-    - name: Install Buildozer
-      run: |
-        pip3 install --user buildozer cython==0.29.36
+# (list) Source files to include
+source.include_exts = py,kv,png,jpg,atlas
 
-    - name: Accept Android licenses
-      run: |
-        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-        echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-        echo "84831b9409646a918e30573bab4c9c91346d8abd" >> ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+# (str) Application version
+version = 1.0
 
-    - name: Build APK
-      run: |
-        ~/.local/bin/buildozer android debug
+# (list) Requirements
+requirements = python3,kivy
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: apk
-        path: bin/*.apk
+# (str) Supported orientation
+orientation = portrait
+
+# (bool) Fullscreen
+fullscreen = 0
+
+
+[buildozer]
+
+# (int) Log level
+log_level = 2

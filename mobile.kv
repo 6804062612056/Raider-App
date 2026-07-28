@@ -1,0 +1,22 @@
+#:import HomeApp screens.home.HomeApp
+
+HomeApp:
+
+<HomeApp>:
+    orientation: "vertical"
+    padding: 20
+    spacing: 15
+
+    Label:
+        text: "My Mobile App"
+        font_size: "28sp"
+
+    Button:
+        text: "Start"
+
+    Button:
+        text: "Settings"
+
+    Button:
+        text: "Exit"
+        on_release: app.stop()

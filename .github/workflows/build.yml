@@ -24,21 +24,26 @@ jobs:
           git \
           zip \
           unzip \
-          openjdk-17-jdk
+          openjdk-17-jdk \
+          android-sdk
+
+        echo "ANDROID_HOME=/usr/lib/android-sdk" >> $GITHUB_ENV
+        echo "ANDROID_SDK_ROOT=/usr/lib/android-sdk" >> $GITHUB_ENV
+        echo "/usr/lib/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
     - name: Install Buildozer
       run: |
         pip3 install --user buildozer cython==0.29.36
 
-    - name: Accept Android licenses
+    - name: Setup Android SDK
       run: |
         mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-        echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-        echo "84831b9409646a918e30573bab4c9c91346d8abd" >> ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+        yes | sdkmanager --licenses || true
+        sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
     - name: Build APK
       run: |
-        ~/.local/bin/buildozer android debug
+        yes | ~/.local/bin/buildozer android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4

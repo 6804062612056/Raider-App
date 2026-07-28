@@ -24,9 +24,16 @@ jobs:
           git \
           zip \
           unzip \
-          openjdk-17-jdk
+          openjdk-17-jdk \
+          wget
 
-    - name: Install Android SDK tools
+    - name: Setup Java 17
+      run: |
+        echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
+        echo "/usr/lib/jvm/java-17-openjdk-amd64/bin" >> $GITHUB_PATH
+        java -version
+
+    - name: Install Android SDK Command Line Tools
       run: |
         mkdir -p $HOME/android-sdk/cmdline-tools
 
@@ -44,7 +51,6 @@ jobs:
     - name: Accept Android licenses
       run: |
         yes | sdkmanager --licenses
-
         sdkmanager \
           "platform-tools" \
           "platforms;android-35" \

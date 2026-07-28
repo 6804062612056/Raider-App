@@ -1,0 +1,28 @@
+#:import HomeApp screens.home.HomeApp
+
+<HomeApp>:
+    orientation: "vertical"
+    padding: 20
+    spacing: 15
+
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    Label:
+        text: "My Mobile App"
+        font_size: "28sp"
+        color: 0, 0, 0, 1
+
+    Button:
+        text: "Start"
+
+    Button:
+        text: "Settings"
+
+    Button:
+        text: "Exit"
+        on_release: app.stop()

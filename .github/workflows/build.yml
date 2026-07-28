@@ -1,0 +1,71 @@
+name: Build APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y \
+          python3-pip \
+          python3-setuptools \
+          python3-venv \
+          git \
+          zip \
+          unzip \
+          openjdk-17-jdk \
+          wget
+
+    - name: Setup Java 17
+      run: |
+        echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
+        echo "/usr/lib/jvm/java-17-openjdk-amd64/bin" >> $GITHUB_PATH
+        java -version
+
+    - name: Install Android SDK Command Line Tools
+      run: |
+        mkdir -p $HOME/android-sdk/cmdline-tools
+
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+
+        unzip -q commandlinetools-linux-11076708_latest.zip -d $HOME/android-sdk/cmdline-tools
+
+        mv $HOME/android-sdk/cmdline-tools/cmdline-tools \
+           $HOME/android-sdk/cmdline-tools/latest
+
+        echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+        echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+        echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+
+    - name: Accept Android licenses
+      run: |
+        yes | sdkmanager --licenses
+        sdkmanager \
+          "platform-tools" \
+          "platforms;android-35" \
+          "build-tools;35.0.0"
+
+    - name: Install Buildozer
+      run: |
+        pip3 install --user buildozer cython==0.29.36
+
+    - name: Build APK
+      run: |
+        yes | ~/.local/bin/buildozer android debug
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: apk
+        path: bin/*.apk

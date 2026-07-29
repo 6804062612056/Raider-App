@@ -1,0 +1,17 @@
+#:import dp kivy.metrics.dp
+#:import sp kivy.metrics.sp
+
+<Button1@Button>:
+    size_hint_y: None
+    height: dp(50)
+    font_size: sp(18)
+    background_normal: ""
+    background_color: 0.85, 0.85, 0.85, 1
+    color: 0,0,0,1
+
+    canvas.after:
+        Color:
+            rgba: (0,0,0,1)
+        Line:
+            width: 1
+            rectangle: (self.x, self.y, self.width, self.height)

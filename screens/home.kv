@@ -1,0 +1,18 @@
+#:import dp kivy.metrics.dp
+#:import sp kivy.metrics.sp
+
+<Home>:
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(40)
+        spacing: dp(20)
+
+        Label:
+            text: "HOME"
+            font_size: sp(32)
+            color: 0, 0, 0, 1
+
+        Button1:
+            text: "Logout"
+            on_press: root.go_login()

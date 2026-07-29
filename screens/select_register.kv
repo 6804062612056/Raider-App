@@ -1,0 +1,20 @@
+#:import dp kivy.metrics.dp
+#:import sp kivy.metrics.sp
+
+<SelectRegister>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(50)
+        spacing: dp(20)
+
+        Widget:
+
+        Button1:
+            text: "Register Customer"
+            on_press: root.go_register("Customer")
+
+        Button1:
+            text: "Register Rider"
+            on_press: root.go_register("Rider")
+
+        Widget:

@@ -1,0 +1,43 @@
+#:import dp kivy.metrics.dp
+#:import sp kivy.metrics.sp
+
+<Login>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: sp(40)
+        spacing: sp(20)
+
+        Widget:   # ดันลงกลาง
+            size_hint_y: 0.05
+
+        Label:
+            text: "Login"
+            font_size: sp(26)
+            color: 0,0,0,1
+            size_hint_y: None
+            height: dp(40)
+
+        Widget:   # ดันลงกลาง
+            size_hint_y: 0.05
+
+        Input1:
+            hint_text: "Email"
+
+        Input1:
+            hint_text: "Password"
+            password: True
+
+        Button1:
+            text: "Login"
+            on_press: root.go_home()
+
+        Button:
+            text: "Register?"
+            color: 0,0,0,1
+            size_hint_y: None
+            height: dp(30)
+            background_color: 0,0,0,0
+            on_press: root.go_select_register()
+
+        Widget:   # ดันขึ้นสมดุล
+            size_hint_y: 0.4

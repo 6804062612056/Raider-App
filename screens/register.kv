@@ -1,0 +1,54 @@
+#:import dp kivy.metrics.dp
+#:import sp kivy.metrics.sp
+
+<Register>:
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(30)
+        spacing: dp(10)
+
+        Widget:
+            size_hint_y: 0.05
+
+        Label:
+            text: "Register"
+            font_size: sp(26)
+            color: 0,0,0,1
+            size_hint_y: None
+            height: dp(50)
+
+        Input1:
+            hint_text: "First Name"
+
+        Input1:
+            hint_text: "Last Name"
+
+        Input1:
+            hint_text: "Email"
+
+        Input1:
+            hint_text: "Password"
+            password: True
+
+        Input1:
+            hint_text: "Confirm Password"
+            password: True
+
+        Widget:
+            size_hint_y: 0.08
+
+        Button1:
+            text: "Register"
+            on_press: root.go_login()
+
+        Button:
+            text: "Back to Login"
+            color: 0,0,0,1
+            size_hint_y: None
+            height: dp(30)
+            background_color: 0,0,0,0
+            on_press: root.go_login()
+
+        Widget:
+            size_hint_y: 0.4

@@ -1,0 +1,67 @@
+<Login>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: "40sp"
+        spacing: "10sp"
+
+        Widget:   # ดันลงกลาง
+            size_hint_y: 0.05
+
+        Label:
+            text: "Login"
+            font_size: "26sp"
+            color: 0,0,0,1
+            size_hint_y: None
+            height: "40dp"
+
+        Widget:   # ดันลงกลาง
+            size_hint_y: 0.05
+
+        Input1:
+            hint_text: "Email"
+            id: email
+            on_text: root.check_form()
+
+        Input1:
+            hint_text: "Password"
+            id: password
+            password: True
+            on_text: root.check_form()
+            
+        Label:
+            text: root.error_message
+            color: 1, 0, 0, 1
+            font_size: "14sp"
+            size_hint_y: None
+            height: "20dp"
+            halign: "left"
+            text_size: self.width, None
+
+        Widget:
+            size_hint_y: 0.025
+
+        Button1:
+            text: "Login"
+            on_press: root.login()
+            disabled: not root.form_valid
+
+        Button:
+            text: "Register?"
+            color: 0,0,0,1
+            size_hint_y: None
+            height: "30dp"
+            background_color: 0,0,0,0
+            on_press: root.go_to("select_register")
+
+        Widget:   # ดันขึ้นสมดุล
+            size_hint_y: 0.4
+
+    AnchorLayout:
+        anchor_x: "left"
+        anchor_y: "bottom"
+
+        Button:
+            text: "Data"
+            size_hint: None, None
+            size: "80dp", "40dp"
+            on_press: root.go_to("user_list")

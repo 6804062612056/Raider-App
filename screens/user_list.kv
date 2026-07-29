@@ -1,0 +1,46 @@
+<UserList>:
+    BoxLayout:
+        orientation: "vertical"
+
+        Label:
+            text: "Users"
+            size_hint_y: None
+            height: "50dp"
+            font_size: "24sp"
+
+        ScrollView:
+            GridLayout:
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: "5dp"
+                padding: "10dp"
+
+                Label:
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(15)
+                    text_size: self.width, None
+                    halign: "left"
+                    valign: "top"
+                    color: 0, 0, 0, 1
+                    text: "\n".join(root.users)
+
+    AnchorLayout:
+        anchor_x: "left"
+        anchor_y: "bottom"
+
+        Button:
+            text: "Back"
+            size_hint: None, None
+            size: "80dp", "40dp"
+            on_press: root.go_to("login")
+
+    AnchorLayout:
+        anchor_x: "right"
+        anchor_y: "bottom"
+
+        Button:
+            text: "Clear"
+            size_hint: None, None
+            size: "80dp", "40dp"
+            on_press: root.clear_users()

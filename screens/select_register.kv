@@ -1,0 +1,17 @@
+<SelectRegister>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: "50dp"
+        spacing: "20dp"
+
+        Widget:
+
+        Button1:
+            text: "Register Customer"
+            on_press: root.go_register("customer")
+
+        Button1:
+            text: "Register Rider"
+            on_press: root.go_register("rider")
+
+        Widget:

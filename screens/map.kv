@@ -1,0 +1,35 @@
+<Map>:
+    FloatLayout:
+
+        MapView:
+            id: mapview
+            lat: 0
+            lon: 0
+            zoom: 15
+
+        Label:
+            text: root.location_text
+            size_hint: None, None
+            size: "180dp", "60dp"
+            pos_hint: {"right": 0.98, "top": 0.98}
+            color: 0, 0, 0, 1
+            font_size: "14sp"
+
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 0.6
+
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [10]
+
+        AnchorLayout:
+            anchor_x: "left"
+            anchor_y: "bottom"
+
+            Button:
+                text: "Back"
+                size_hint: None, None
+                size: "80dp", "40dp"
+                on_press: root.go_to("login")

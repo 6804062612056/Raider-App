@@ -1,0 +1,104 @@
+import requests
+
+URL = "https://bdjpukljrkxhdzvrxrvh.supabase.co/rest/v1/Userdata"
+API_KEY = "sb_publishable_N0tPIPFIozXQe-v8wAFskw_ukG67uvK"
+
+HEADERS = {
+    "apikey": API_KEY,
+    "Authorization": f"Bearer {API_KEY}",
+    "Content-Type": "application/json"
+}
+
+def insert(email, firstname, lastname, password, role, money):
+    data = {
+        "email": email,
+        "firstname": firstname,
+        "lastname": lastname,
+        "password": password,
+        "role": role,
+        "money": money
+    }
+    response = requests.post(URL, headers=HEADERS, json=data)
+    if response.status_code in (200, 201):
+        print("INSERT: Success")
+        print("Email:", email)
+        print("Firstname:", firstname)
+        print("Lastname:", lastname)
+        print("Role:", role)
+        print("Money:", money)
+    else:
+        print("INSERT: Failed")
+        print("Status:", response.status_code)
+        print("Error:", response.text)
+
+def delete(email):
+    check = requests.get(
+        URL,
+        headers=HEADERS,
+        params={"email": f"eq.{email}"}
+    )
+    if check.status_code != 200:
+        print("DELETE: Failed to search")
+        print("Status:", check.status_code)
+        print("Error:", check.text)
+        return
+    data = check.json()
+    if len(data) == 0:
+        print("DELETE: Not Found")
+        return
+    response = requests.delete(
+        URL,
+        headers=HEADERS,
+        params={"email": f"eq.{email}"}
+    )
+    if response.status_code in (200, 204):
+        print("DELETE: Success")
+    else:
+        print("DELETE: Failed")
+        print("Status:", response.status_code)
+        print("Error:", response.text)
+
+def search(email):
+    params = {
+        "email": f"eq.{email}"
+    }
+
+    response = requests.get(
+        URL,
+        headers=HEADERS,
+        params=params
+    )
+
+    if response.status_code != 200:
+        print("SEARCH: Failed")
+        print("Status:", response.status_code)
+        print("Error:", response.text)
+        return None
+
+    data = response.json()
+
+    if len(data) == 0:
+        return None
+
+    return data[0]
+
+def select_all():
+    response = requests.get(
+        URL,
+        headers=HEADERS
+    )
+
+    if response.status_code != 200:
+        print("SELECT: Failed")
+        print("Status:", response.status_code)
+        print("Error:", response.text)
+        return None
+
+    data = response.json()
+
+    if len(data) == 0:
+        print("SELECT: No Data")
+        return []
+
+    print("SELECT: Success")
+    return data

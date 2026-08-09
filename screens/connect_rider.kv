@@ -1,0 +1,24 @@
+<Connect2>:
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        orientation:"vertical"
+
+        Label:
+            text:"Waiting for customer requests..."
+            font_size:"22sp"
+            color: 0, 0, 0, 1
+
+        AnchorLayout:
+            anchor_x:"left"
+            anchor_y:"bottom"
+
+            Button:
+                text:"Back"
+                size_hint:None,None
+                size:"80dp","40dp"
+                on_press:root.go_to("home_rider")

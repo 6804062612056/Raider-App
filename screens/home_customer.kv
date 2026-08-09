@@ -1,0 +1,41 @@
+<Home1>:
+    canvas.before:
+        Color:
+            rgba: 1,1,1,1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        orientation: "vertical"
+        padding: "40dp"
+        spacing: "20dp"
+
+        Label:
+            text: "HOME(customer)"
+            font_size: "32sp"
+            color: 0, 0, 0, 1
+            size_hint_y: None
+            height: "50dp"
+
+        Label:
+            text: "email : " + root.email
+            color: 0, 0, 0, 1
+            font_size: "14sp"
+            size_hint_y: None
+            height: "20dp"
+
+        Widget:
+
+        Button1:
+            text: "Connect"
+            on_press: root.go_to("connect_customer")
+
+        Button1:
+            text: "Map"
+            on_press: root.go_to("map")
+
+        Widget:
+
+        Button1:
+            text: "Logout"
+            on_press: root.logout()

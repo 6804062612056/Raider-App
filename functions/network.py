@@ -1,4 +1,4 @@
-import socket,json,re,subprocess
+import socket,json,re,subprocess,ipaddress
 from kivy.utils import platform
 from functions import file,database
 
@@ -10,18 +10,6 @@ server_socket=None
 def set_request_callback(callback):
     global request_callback
     request_callback=callback
-
-def ip_int(ip):
-    return sum(int(x)<<(24-i*8) for i,x in enumerate(ip.split(".")))
-
-def int_ip(n):
-    return ".".join(str((n>>x)&255) for x in (24,16,8,0))
-
-def get_broadcast(ip,mask):
-    try:
-        return int_ip(ip_int(ip)|(0xffffffff^ip_int(mask)))
-    except:
-        return None
 
 def get_windows_networks():
     if platform=="android":
@@ -43,30 +31,32 @@ def get_windows_networks():
         for x in ips:
             if x.startswith(("127.","169.254.")):
                 continue
+            if x.startswith(("255.","254.")):
+                if ip and not mask:
+                    mask=x
+                continue
             if not ip:
                 ip=x
-            elif x.startswith(("255.","254.")):
-                mask=x
-                break
         if not ip:
             continue
         if not mask:
             mask="255.255.255.0"
-        if "hamachi" in low:
+        if "hamachi" in low or ip.startswith("25."):
             kind="hamachi"
-        elif "radmin" in low:
+        elif "radmin" in low or ip.startswith("26."):
             kind="radmin"
         elif "zerotier" in low or "zero tier" in low:
             kind="zerotier"
-        elif ip.startswith("26."):
-            kind="radmin"
-        elif ip.startswith("25."):
-            kind="hamachi"
         else:
             kind="lan"
-        network={"ip":ip,"mask":mask,"broadcast":get_broadcast(ip,mask),"type":kind}
-        result.append(network)
-        print("NETWORK FOUND:",network)
+        try:
+            network=ipaddress.IPv4Network(f"{ip}/{mask}",strict=False)
+            broadcast=str(network.broadcast_address)
+        except:
+            continue
+        info={"ip":ip,"mask":mask,"broadcast":broadcast,"network":str(network),"type":kind}
+        result.append(info)
+        print("NETWORK FOUND:",info)
     print("TOTAL NETWORKS:",len(result))
     return result
 
@@ -93,16 +83,23 @@ def get_android_networks():
                 prefix=int(info.getNetworkPrefixLength())
                 if prefix<=0 or prefix>32:
                     prefix=24
-                mask=int_ip((0xffffffff<<(32-prefix))&0xffffffff)
+                try:
+                    network=ipaddress.IPv4Network(f"{ip}/{prefix}",strict=False)
+                    mask=str(network.netmask)
+                    broadcast=str(network.broadcast_address)
+                except:
+                    continue
                 if name.startswith("zt"):
                     kind="zerotier"
                 elif name.startswith("tun"):
                     kind="vpn"
-                else:
+                elif name.startswith(("wlan","eth")):
                     kind="lan"
-                network={"ip":ip,"mask":mask,"broadcast":get_broadcast(ip,mask),"type":kind}
-                result.append(network)
-                print("NETWORK FOUND:",network)
+                else:
+                    kind="other"
+                network_info={"ip":ip,"mask":mask,"broadcast":broadcast,"network":str(network),"type":kind}
+                result.append(network_info)
+                print("NETWORK FOUND:",network_info)
     except Exception as e:
         print("ANDROID NETWORK ERROR:",e)
     print("TOTAL NETWORKS:",len(result))
@@ -113,7 +110,7 @@ def get_networks():
 
 def get_network_info():
     networks=get_networks()
-    priority=["hamachi","radmin","zerotier","vpn","lan"]
+    priority=["hamachi","radmin","zerotier","vpn","lan","other"]
     for kind in priority:
         for network in networks:
             if network["type"]==kind:
@@ -141,7 +138,6 @@ def start_server():
         sock=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         server_socket=sock
         sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
-        sock.setsockopt(socket.SOL_SOCKET,socket.SO_BROADCAST,1)
         sock.bind(("0.0.0.0",PORT))
         sock.settimeout(1)
         server_running=True
@@ -195,53 +191,62 @@ def stop_server():
     server_socket=None
     print("SERVER STOP REQUESTED")
 
+def scan_ip(sock,ip,local_ip,users,used_emails,used_ips):
+    try:
+        request=json.dumps({"type":"scan"}).encode("utf-8")
+        sock.sendto(request,(ip,PORT))
+        print("SCAN SENT TO:",ip)
+        sock.settimeout(0.15)
+        while True:
+            try:
+                data,address=sock.recvfrom(4096)
+            except socket.timeout:
+                break
+            response=json.loads(data.decode("utf-8"))
+            if response.get("type")!="user":
+                continue
+            email=response.get("email")
+            found_ip=address[0]
+            if not email or found_ip==local_ip:
+                continue
+            if email in used_emails or found_ip in used_ips:
+                continue
+            user=database.search(email)
+            if not user:
+                continue
+            user["ip"]=found_ip
+            users.append(user)
+            used_emails.add(email)
+            used_ips.add(found_ip)
+            print("USER FOUND:",user)
+    except Exception as e:
+        print("SCAN ERROR:",ip,e)
+
 def scan_network():
     networks=get_networks()
     if not networks:
         print("SCAN: Network not found")
         return []
-    sock=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-    sock.setsockopt(socket.SOL_SOCKET,socket.SO_BROADCAST,1)
-    sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
-    sock.settimeout(2)
-    targets=set()
+    local_ip=get_network_ip()
+    targets=[]
     for network in networks:
-        broadcast=network.get("broadcast")
-        if broadcast:
-            targets.add(broadcast)
-    print("SCAN TARGETS:",targets)
-    request=json.dumps({"type":"scan"}).encode("utf-8")
-    for target in targets:
         try:
-            sock.sendto(request,(target,PORT))
-            print("SCAN SENT TO:",target)
+            net=ipaddress.IPv4Network(network["network"],strict=False)
+            for ip in net.hosts():
+                ip=str(ip)
+                if ip!=local_ip:
+                    targets.append(ip)
         except Exception as e:
-            print("SCAN SEND ERROR:",target,e)
+            print("NETWORK SCAN ERROR:",e)
+    targets=list(dict.fromkeys(targets))
+    print("TOTAL SCAN IP:",len(targets))
     users=[]
     used_emails=set()
     used_ips=set()
-    while True:
-        try:
-            data,address=sock.recvfrom(4096)
-            response=json.loads(data.decode("utf-8"))
-            if response.get("type")!="user":
-                continue
-            email=response.get("email")
-            ip=address[0]
-            if not email or email in used_emails or ip in used_ips:
-                continue
-            user=database.search(email)
-            if not user:
-                continue
-            user["ip"]=ip
-            users.append(user)
-            used_emails.add(email)
-            used_ips.add(ip)
-            print("USER FOUND:",user)
-        except socket.timeout:
-            break
-        except Exception as e:
-            print("SCAN ERROR:",e)
+    sock=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+    sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+    for ip in targets:
+        scan_ip(sock,ip,local_ip,users,used_emails,used_ips)
     sock.close()
     print("TOTAL USERS:",len(users))
     return users

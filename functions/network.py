@@ -64,8 +64,7 @@ def get_windows_networks():
             kind="hamachi"
         else:
             kind="lan"
-        broadcast=get_broadcast(ip,mask)
-        network={"ip":ip,"mask":mask,"broadcast":broadcast,"type":kind}
+        network={"ip":ip,"mask":mask,"broadcast":get_broadcast(ip,mask),"type":kind}
         result.append(network)
         print("NETWORK FOUND:",network)
     print("TOTAL NETWORKS:",len(result))
@@ -101,8 +100,7 @@ def get_android_networks():
                     kind="vpn"
                 else:
                     kind="lan"
-                broadcast=get_broadcast(ip,mask)
-                network={"ip":ip,"mask":mask,"broadcast":broadcast,"type":kind}
+                network={"ip":ip,"mask":mask,"broadcast":get_broadcast(ip,mask),"type":kind}
                 result.append(network)
                 print("NETWORK FOUND:",network)
     except Exception as e:
@@ -111,9 +109,7 @@ def get_android_networks():
     return result
 
 def get_networks():
-    if platform=="android":
-        return get_android_networks()
-    return get_windows_networks()
+    return get_android_networks() if platform=="android" else get_windows_networks()
 
 def get_network_info():
     networks=get_networks()
@@ -145,7 +141,8 @@ def start_server():
         sock=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         server_socket=sock
         sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
-        sock.bind((ip,PORT))
+        sock.setsockopt(socket.SOL_SOCKET,socket.SO_BROADCAST,1)
+        sock.bind(("0.0.0.0",PORT))
         sock.settimeout(1)
         server_running=True
         print(f"SERVER STARTED: {info['type']} {ip}:{PORT}")
@@ -154,6 +151,7 @@ def start_server():
                 data,address=sock.recvfrom(4096)
                 request=json.loads(data.decode("utf-8"))
                 request_type=request.get("type")
+                print("REQUEST:",request_type,"FROM:",address[0])
                 if request_type=="scan":
                     email=file.read_email()
                     if not email:

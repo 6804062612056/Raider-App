@@ -101,6 +101,8 @@ def get_android_networks() -> List[Dict[str, str]]:
         return []
 
     result: List[Dict[str, str]] = []
+    zt_results: List[Dict[str, str]] = []  # 📌 แยกเก็บวง ZeroTier ไว้ต่างหากเพื่อให้ได้ความสำคัญสูงสุด
+
     try:
         from jnius import autoclass
 
@@ -111,8 +113,10 @@ def get_android_networks() -> List[Dict[str, str]]:
             interface = interfaces.nextElement()
             if_name = interface.getName().lower()
             
-            # 🛑 กรองข้ามอินเทอร์เฟซที่เป็น VPN หรือ Loopback เพื่อป้องกันการดึงวงไอพี VPN มาใช้
-            if "tun" in if_name or "ppp" in if_name or "p2p" in if_name or "vpn" in if_name:
+            is_zerotier = "zt" in if_name or "zerotier" in if_name or "tun" in if_name
+            is_general_vpn = "ppp" in if_name or "p2p" in if_name
+
+            if is_general_vpn and not is_zerotier:
                 continue
 
             addresses = interface.getInterfaceAddresses()
@@ -144,13 +148,19 @@ def get_android_networks() -> List[Dict[str, str]]:
                         "network": str(net),
                         "type": "active",
                     }
-                    result.append(network_info)
+                    
+                    # 📌 จัดลำดับให้ ZeroTier หรือ IP วงเสมือนขึ้นมาก่อน
+                    if is_zerotier or ip.startswith("10."):
+                        zt_results.append(network_info)
+                    else:
+                        result.append(network_info)
                 except Exception:
                     continue
     except Exception as e:
         print(f"ANDROID NETWORK ERROR: {e}")
 
-    return result
+    # 📌 เอา ZeroTier ขึ้นมาไว้บนสุดเสมอ เพื่อให้ระบบหยิบ IP นี้ไปใช้ก่อนเน็ตซิม
+    return zt_results + result
 
 
 def get_networks() -> List[Dict[str, str]]:
@@ -159,7 +169,6 @@ def get_networks() -> List[Dict[str, str]]:
 
 def get_broadcast_subnets() -> set[str]:
     networks = get_networks()
-    # 📌 เพิ่ม Broadcast พื้นฐานเผื่อกรณีฉุกเฉินเพื่อให้ระบบยังพยายามยิงออกวง Wi-Fi ปกติได้
     subnets = {
         "255.255.255.255", 
         "192.168.1.255", 
@@ -170,11 +179,7 @@ def get_broadcast_subnets() -> set[str]:
     
     for net in networks:
         b_ip = net.get("broadcast")
-        ip = net.get("ip", "")
-        
         if b_ip:
-            if ip.startswith("100.64."): 
-                continue
             subnets.add(b_ip)
             
     return subnets
@@ -219,7 +224,6 @@ def start_server() -> None:
                 request = json.loads(data.decode("utf-8"))
                 request_type = request.get("type")
 
-                # ถ้ามี Rider ส่งสแกนมา ให้ลูกค้ายกข้อมูลส่วนตัวพร้อมพิกัดส่งกลับไปหา Rider
                 if request_type == "scan_customer":
                     email = file.read_email()
                     if not email:
@@ -229,7 +233,6 @@ def start_server() -> None:
                     if not user:
                         continue
 
-                    # ดึงพิกัดจากหน้าจอ select_location ผ่าน ScreenManager โดยตรง
                     start_lat, start_lon, dest_lat, dest_lon = None, None, None, None
                     try:
                         app = App.get_running_app()
@@ -246,7 +249,6 @@ def start_server() -> None:
                                 except Exception:
                                     pass
 
-                            # Fallback สำรองเผื่อเก็บไว้ที่ตัว manager โดยตรง
                             if start_lat is None:
                                 start_lat = getattr(sm, "my_start_lat", None)
                                 start_lon = getattr(sm, "my_start_lon", None)
@@ -255,6 +257,7 @@ def start_server() -> None:
                     except Exception as e:
                         print(f"Error fetching coordinates: {e}")
 
+                    # 📌 แนบ IP ที่แท้จริง (ZeroTier IP) ไปกับ Response
                     response = {
                         "type": "customer_info",
                         "email": email,
@@ -265,11 +268,11 @@ def start_server() -> None:
                         "start_lon": start_lon,
                         "dest_lat": dest_lat,
                         "dest_lon": dest_lon,
+                        "ip": get_network_ip(), 
                     }
                     sock.sendto(json.dumps(response).encode("utf-8"), address)
                     print(f"CUSTOMER INFO SENT TO RIDER: {address[0]} with coords: ({start_lat}, {start_lon}) -> ({dest_lat}, {dest_lon})")
 
-                # เพิ่มส่วนรองรับ BOOK_REQUEST จาก Rider
                 elif request_type == "BOOK_REQUEST":
                     if request_callback:
                         request_data = request
@@ -326,7 +329,6 @@ def scan_network_for_customers() -> List[Dict[str, Any]]:
 
         print("RIDER SENDING SCAN TO TARGETS:", broadcast_targets)
 
-        # ส่งย้ำ 3 รอบกันหลุด
         for _ in range(3):
             for b_ip in broadcast_targets:
                 try:
@@ -344,9 +346,6 @@ def scan_network_for_customers() -> List[Dict[str, Any]]:
                 data, address = sock.recvfrom(BUFFER_SIZE)
                 found_ip = address[0]
 
-                if found_ip in used_ips:
-                    continue
-
                 response = json.loads(data.decode("utf-8"))
                 if response.get("type") != "customer_info":
                     continue
@@ -356,10 +355,15 @@ def scan_network_for_customers() -> List[Dict[str, Any]]:
                     continue
 
                 customer = response
-                customer["ip"] = found_ip
+                # 📌 บังคับใช้ IP ที่มือถือระบุมาใน JSON เพื่อป้องกันไอพีสลับวง
+                customer["ip"] = response.get("ip", found_ip)
+
+                if customer["ip"] in used_ips:
+                    continue
+
                 customers.append(customer)
                 used_emails.add(email)
-                used_ips.add(found_ip)
+                used_ips.add(customer["ip"])
                 print("FOUND CUSTOMER:", customer)
 
             except socket.timeout:

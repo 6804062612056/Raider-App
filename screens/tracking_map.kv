@@ -1,0 +1,33 @@
+<TrackingMap>:
+    canvas.before:
+        Color:
+            rgba: 1,1,1,1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    FloatLayout:
+
+        MapView:
+            id: mapview
+            lat: 0
+            lon: 0
+            zoom: 15
+
+        Label:
+            text: root.location_text
+            size_hint: None, None
+            size: "240dp", "65dp"  # <--- ขยายขนาดความกว้างและความสูงขึ้น
+            pos_hint: {"right": 0.98, "top": 0.98}
+            color: 0, 0, 0, 1
+            font_size: "14sp"
+            halign: "center"       # จัดข้อความให้อยู่ตรงกลาง
+            valign: "middle"
+
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 0.8  # ปรับความโปร่งใสให้เข้มขึ้นนิดหน่อย (0.8) จะได้มองเห็นชัดขึ้น
+
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [10]

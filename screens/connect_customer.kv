@@ -1,0 +1,54 @@
+<Connect1>:  # หรือชื่อ Screen ของฝั่ง Customer ที่ตรงกับ Python
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: 40
+        spacing: 20
+        
+        # จัดให้อยู่กึ่งกลางหน้าจอ
+        AnchorLayout:
+            anchor_x: "center"
+            anchor_y: "center"
+
+            BoxLayout:
+                orientation: "vertical"
+                size_hint: None, None
+                size: "300dp", "200dp"
+                spacing: 15
+
+                # ข้อความแสดงสถานะหลัก (เช่น Waiting for Rider...)
+                Label:
+                    text: root.result_text
+                    font_size: "22sp"
+                    color: 0, 0, 0, 1
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.width, None
+
+                # ข้อความแสดง Subnets ด้านล่าง (ถ้าต้องการให้โชว์ตอนยิง Broadcast)
+                Label:
+                    text: root.subnets_text
+                    font_size: "12sp"
+                    color: 0.5, 0.5, 0.5, 1
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.width, None
+
+        # ปุ่ม Back ด้านล่าง (ถ้าต้องการให้กดกลับหน้าหลักได้)
+        AnchorLayout:
+            anchor_x: "left"
+            anchor_y: "bottom"
+            size_hint_y: None
+            height: "50dp"
+
+            Button:
+                text: "Back"
+                size_hint: None, None
+                size: "80dp", "40dp"
+                on_press: root.go_to("home_customer")  # เปลี่ยนชื่อหน้า Home ตามโปรเจกต์ของคุณ

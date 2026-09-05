@@ -1,0 +1,116 @@
+<RideFeeScreen>:
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: "20dp"
+        spacing: "15dp"
+
+        # --- Title ---
+        Label:
+            text: "Ride Fee"
+            font_size: "24sp"
+            bold: True
+            color: 0, 0, 0, 1
+            size_hint: 1, None
+            height: "40dp"
+            halign: "center"
+            valign: "middle"
+
+        # --- Map View ---
+        StaticMapView:
+            id: map_view
+            size_hint: 1, None
+            height: "220dp"
+            lat: 13.738288
+            lon: 100.532340
+            zoom: 13
+
+        # --- Distance Row ---
+        BoxLayout:
+            size_hint: 1, None
+            height: "30dp"
+            Label:
+                text: "Distance"
+                font_size: "15sp"
+                bold: True
+                color: 0, 0, 0, 1
+                halign: "left"
+                text_size: self.size
+                valign: "middle"
+            Label:
+                text: root.distance_text
+                font_size: "15sp"
+                color: 0, 0, 0, 1
+                halign: "right"
+                text_size: self.size
+                valign: "middle"
+
+        # --- Ride Fee Row ---
+        BoxLayout:
+            size_hint: 1, None
+            height: "30dp"
+            Label:
+                text: "Ride Fee"
+                font_size: "15sp"
+                bold: True
+                color: 0, 0, 0, 1
+                halign: "left"
+                text_size: self.size
+                valign: "middle"
+            Label:
+                text: root.ride_fee_text
+                font_size: "17sp"
+                bold: True
+                color: 0, 0, 0, 1
+                halign: "right"
+                text_size: self.size
+                valign: "middle"
+
+        # --- Balance Row ---
+        BoxLayout:
+            size_hint: 1, None
+            height: "30dp"
+            Label:
+                text: "Balance"
+                font_size: "15sp"
+                bold: True
+                color: 0, 0, 0, 1
+                halign: "left"
+                text_size: self.size
+                valign: "middle"
+            Label:
+                text: root.balance_text
+                font_size: "15sp"
+                color: 0, 0, 0, 1
+                halign: "right"
+                text_size: self.size
+                valign: "middle"
+
+        # --- Spacer ---
+        Widget:
+            size_hint: 1, 1
+
+        # --- Continue Button ---
+        Button:
+            text: "Continue"
+            font_size: "18sp"
+            bold: True
+            size_hint: 1, None
+            height: "50dp"
+            background_normal: ""
+            background_color: (0.93, 0.93, 0.93, 1)
+            color: (0, 0, 0, 1)
+            on_release: root.on_continue()
+
+            canvas.after:
+                Color:
+                    rgba: 0, 0, 0, 1
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, 8)
+                    width: 1

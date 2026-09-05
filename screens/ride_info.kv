@@ -1,0 +1,109 @@
+<RideInfoScreen>:
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: "30dp"
+        spacing: "20dp"
+
+        # หัวข้อหน้าจอ
+        Label:
+            text: "Ride Information"
+            font_size: "26sp"
+            bold: True
+            color: 0, 0, 0, 1
+            size_hint_y: None
+            height: "40dp"
+            halign: "center"
+            valign: "middle"
+
+        # ใช้ StaticMapView แทนช่อง MAP เทาๆ เพื่อแสดงแผนที่จริงและห้ามเลื่อน
+        StaticMapView:
+            id: map_view
+            size_hint: (1, None)
+            height: "220dp"
+            lat: 13.738288
+            lon: 100.532340
+            zoom: 13
+
+        Widget:
+            size_hint_y: None
+            height: "10dp"
+
+        # ส่วนแสดง Distance
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: None
+            height: "30dp"
+            Label:
+                text: "Distance"
+                font_size: "16sp"
+                bold: True
+                color: 0, 0, 0, 1
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+            Label:
+                text: root.distance_text
+                font_size: "16sp"
+                bold: True
+                color: 0, 0, 0, 1
+                halign: "right"
+                valign: "middle"
+                text_size: self.size
+
+        # ส่วนแสดง Earnings
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: None
+            height: "30dp"
+            Label:
+                text: "Earnings"
+                font_size: "16sp"
+                bold: True
+                color: 0, 0, 0, 1
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+            Label:
+                text: root.earnings_text
+                font_size: "16sp"
+                bold: True
+                color: 0, 0, 0, 1
+                halign: "right"
+                valign: "middle"
+                text_size: self.size
+
+        Widget:
+
+        # ปุ่ม Reject และ Accept วางคู่กัน
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: None
+            height: "55dp"
+            spacing: "15dp"
+
+            # ปุ่ม Reject (ปฏิเสธ)
+            Button:
+                text: "Reject"
+                font_size: "18sp"
+                bold: True
+                background_normal: ""
+                background_color: (0.9, 0.2, 0.2, 1)  # สีแดง
+                color: (1, 1, 1, 1)
+                on_release: root.reject_ride()
+
+            # ปุ่ม Accept (ยอมรับ)
+            Button:
+                text: "Accept"
+                font_size: "18sp"
+                bold: True
+                background_normal: ""
+                background_color: (0.2, 0.8, 0.2, 1)  # สีเขียว
+                color: (1, 1, 1, 1)
+                on_release: root.accept_ride()

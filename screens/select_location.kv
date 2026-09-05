@@ -1,0 +1,131 @@
+#:import MapView kivy_garden.mapview.MapView
+
+<SelectLocation>:
+    FloatLayout:
+
+        # ส่วนแสดงผลแผนที่ (อยู่ด้านหลังสุด)
+        MapView:
+            id: map_view
+            zoom: 14
+            lat: 13.7563
+            lon: 100.5018
+            on_touch_up: root.on_map_touch(self, args[1])
+
+        # กล่องแสดงเงินและราคา มุมบนขวา
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: None, None
+            size: '180dp', '70dp'
+            pos_hint: {'top': 0.98, 'right': 0.98}
+            padding: '8dp'
+            spacing: '4dp'
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 0.9
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+                Color:
+                    rgba: 0.7, 0.7, 0.7, 1
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, 6)
+                    width: 1
+
+            Label:
+                text: "Balance: " + root.current_money_text + " THB"
+                color: 0, 0, 0, 1
+                font_size: "13sp"
+                halign: 'right'
+                valign: 'middle'
+                text_size: self.size
+
+            Label:
+                text: "Price: " + root.trip_price_text + " THB"
+                color: 0.8, 0, 0, 1
+                font_size: "13sp"
+                bold: True
+                halign: 'right'
+                valign: 'middle'
+                text_size: self.size
+
+        # ส่วนปุ่มกดด้านล่าง (เพิ่ม id: bottom_panel เพื่อดักจับ Touch ไม่ให้ทะลุ)
+        BoxLayout:
+            id: bottom_panel
+            orientation: 'vertical'
+            size_hint_y: None
+            height: '210dp'
+            spacing: '10dp'
+            padding: ['20dp', '15dp', '20dp', '15dp']
+            pos_hint: {'x': 0, 'y': 0}
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            # แสดงข้อความแจ้งเตือน
+            Label:
+                text: root.message
+                color: (1, 0, 0, 1)
+                font_size: '14sp'
+                size_hint_y: None
+                height: '20dp'
+                halign: 'center'
+                text_size: self.width, None
+
+            # ปุ่ม Start
+            Button:
+                text: '  Start'
+                halign: 'left'
+                valign: 'middle'
+                text_size: self.size
+                font_size: '15sp'
+                background_normal: ''
+                background_down: ''
+                background_color: (1, 0.9, 0.9, 1) if root.mode == 'start' else (1, 1, 1, 1)
+                color: (0, 0, 0, 1)
+                on_release: root.set_mode('start')
+                canvas.after:
+                    Color:
+                        rgba: (0.8, 0, 0, 1) if root.mode == 'start' else (0.2, 0.2, 0.2, 1)
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 8)
+                        width: 1.1
+
+            # ปุ่ม Destination
+            Button:
+                text: '  Destination'
+                halign: 'left'
+                valign: 'middle'
+                text_size: self.size
+                font_size: '15sp'
+                background_normal: ''
+                background_down: ''
+                background_color: (0.9, 1, 0.9, 1) if root.mode == 'destination' else (1, 1, 1, 1)
+                color: (0, 0, 0, 1)
+                on_release: root.set_mode('destination')
+                canvas.after:
+                    Color:
+                        rgba: (0, 0.6, 0, 1) if root.mode == 'destination' else (0.2, 0.2, 0.2, 1)
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 8)
+                        width: 1.1
+
+            # ปุ่ม Confirm
+            Button:
+                text: 'Confirm'
+                bold: True
+                font_size: '16sp'
+                background_normal: ''
+                background_down: ''
+                background_color: (0.92, 0.92, 0.92, 1)
+                color: (0.5, 0.5, 0.5, 1) if not (root.start_coords and root.dest_coords) else (0, 0, 0, 1)
+                disabled: not (root.start_coords and root.dest_coords)
+                on_release: root.confirm_route()
+                canvas.after:
+                    Color:
+                        rgba: (0.4, 0.4, 0.4, 1)
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 8)
+                        width: 1.1

@@ -1,0 +1,105 @@
+#ตั้งค่าหน้าต่างแอป
+from kivy.config import Config
+Config.set("graphics", "width", "360")
+Config.set("graphics", "height", "800")
+Config.set("graphics", "resizable", "0")
+from kivy.core.window import Window
+Window.clearcolor = (1, 1, 1, 1)
+
+from kivy.app import App
+from kivy.uix.screenmanager import ScreenManager , FadeTransition
+from functions import file
+
+try:
+    from android.permissions import request_permissions, Permission
+except ImportError:
+    request_permissions = None
+
+#โหลดหน้าจอ
+from kivy.lang import Builder
+from screens.login import Login
+from screens.select_register import SelectRegister
+from screens.register import Register
+from screens.home_customer import Home1
+from screens.home_rider import Home2
+from screens.user_list import UserList
+from screens.map import Map
+from screens.connect_customer import Connect1
+from screens.connect_rider import Connect2
+from screens.select_location import SelectLocation
+from screens.tracking_map import TrackingMap
+from screens.request_ride import RequestRideScreen
+from screens.ride_info import RideInfoScreen
+from screens.deposit import DepositScreen
+from screens.withdraw import WithdrawScreen
+from screens.ride_fee import RideFeeScreen
+from screens.rating import RatingScreen
+
+kv_files = [
+    "components/Button1.kv",
+    "components/Input1.kv",
+    "screens/login.kv",
+    "screens/select_register.kv",
+    "screens/register.kv",
+    "screens/home_customer.kv",
+    "screens/home_rider.kv",
+    "screens/user_list.kv",
+    "screens/map.kv",
+    "components/rider_item.kv",
+    "screens/connect_customer.kv",
+    "screens/connect_rider.kv",
+    "screens/select_location.kv",
+    "screens/tracking_map.kv",
+    "screens/request_ride.kv",
+    "screens/ride_info.kv",
+    "screens/deposit.kv",
+    "screens/withdraw.kv",
+    "screens/ride_fee.kv",
+    "screens/rating.kv"
+]
+for data in kv_files:
+    Builder.load_file(data)
+
+class MobileApp(App):
+    def build(self):
+        
+        if request_permissions:
+                    request_permissions([
+                        Permission.ACCESS_FINE_LOCATION,
+                        Permission.ACCESS_COARSE_LOCATION
+                    ])
+
+        sm = ScreenManager(transition=FadeTransition(duration=0.25))
+        sm.add_widget(Login(name="login"))
+        sm.add_widget(SelectRegister(name="select_register"))
+        sm.add_widget(Register(name="register"))
+        sm.add_widget(Home1(name="home_customer"))
+        sm.add_widget(Home2(name="home_rider"))
+        sm.add_widget(UserList(name="user_list"))
+        sm.add_widget(Map(name="map"))
+        sm.add_widget(Connect1(name="connect_customer"))
+        sm.add_widget(Connect2(name="connect_rider"))
+        sm.add_widget(SelectLocation(name="select_location"))
+        sm.add_widget(TrackingMap(name="tracking_map"))
+        sm.add_widget(RequestRideScreen(name="request_ride"))
+        sm.add_widget(RideInfoScreen(name="ride_info"))
+        sm.add_widget(DepositScreen(name="deposit"))
+        sm.add_widget(WithdrawScreen(name="withdraw"))
+        sm.add_widget(RideFeeScreen(name="ride_fee"))
+        sm.add_widget(RatingScreen(name="rating"))
+
+        sm.current = "login"   # <-- ให้เริ่มที่หน้า Login
+
+        if file.check_file() == 1:
+            if file.get_role() == "customer":
+                sm.current = "home_customer"
+            elif file.get_role() == "rider":
+                sm.current = "home_rider"
+        else:
+            sm.current = "login"
+
+        return sm
+
+#run
+if __name__ == "__main__":
+    MobileApp().run()

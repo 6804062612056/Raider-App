@@ -1,0 +1,66 @@
+<WithdrawScreen>:
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: "40sp"
+        spacing: "10sp"
+
+        Widget:
+            size_hint_y: 0.1
+
+        Label:
+            text: "WITHDRAW"
+            font_size: "26sp"
+            color: 0, 0, 0, 1
+            size_hint_y: None
+            height: "40dp"
+
+        Label:
+            text: root.money + " Baht"
+            color: 0, 0, 0, 1
+            font_size: "22sp"
+            size_hint_y: None
+            height: "30dp"
+
+        # ดันกลุ่ม Input และปุ่ม Withdraw ให้ลงมาอยู่ตรงกลาง
+        Widget:
+            size_hint_y: 0.4
+
+        Input1:
+            id: amount_input
+            hint_text: "Amount to withdraw"
+            multiline: False
+            input_filter: "float"
+
+        Label:
+            text: root.message
+            color: (0, 0.5, 0, 1) if "Successfully" in root.message else (1, 0, 0, 1)
+            font_size: "14sp"
+            size_hint_y: None
+            height: "20dp"
+            halign: "left"
+            text_size: self.width, None
+
+        Widget:
+            size_hint_y: 0.025
+
+        Button1:
+            text: "Withdraw"
+            on_press: root.process_withdraw(amount_input.text)
+
+        # ดันปุ่ม Back ลงไปอยู่ด้านล่างสุด
+        Widget:
+            size_hint_y: 0.4
+
+        Button1:
+            text: "Back"
+            on_press: root.go_to("home_rider")
+
+        Widget:
+            size_hint_y: 0.1

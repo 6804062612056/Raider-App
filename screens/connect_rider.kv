@@ -1,0 +1,62 @@
+<Connect2>:
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 15
+
+        Label:
+            text: "Available Customers"
+            size_hint_y: None
+            height: "50dp"
+            font_size: "24sp"
+            color: 0, 0, 0, 1
+
+        # เอาปุ่ม SCAN ออกแล้ว เพื่อให้ทำงานแบบ Real-time อัตโนมัติ
+
+        Label:
+            text: root.result_text
+            size_hint_y: None
+            height: "40dp"
+            font_size: "18sp"
+            color: 0, 0, 0, 1
+
+        ScrollView:
+            do_scroll_x: False
+
+            GridLayout:
+                id: customer_list
+                cols: 1
+                spacing: 10
+                padding: 10
+                size_hint_y: None
+                height: self.minimum_height
+
+        # Label แสดงสถานะการรอรับข้อมูลแบบ Real-time ด้านล่าง
+        Label:
+            text: root.subnets_text
+            size_hint_y: None
+            height: "40dp"
+            font_size: "12sp"
+            color: 0.4, 0.4, 0.4, 1
+            text_size: self.width, None
+            halign: "center"
+            valign: "middle"
+
+        AnchorLayout:
+            anchor_x: "left"
+            anchor_y: "bottom"
+            size_hint_y: None
+            height: "40dp"
+
+            Button:
+                text: "Back"
+                size_hint: None, None
+                size: "80dp", "40dp"
+                on_press: root.go_to("home_rider")

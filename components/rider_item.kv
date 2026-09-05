@@ -1,0 +1,48 @@
+<RiderItem>:
+    orientation:"vertical"
+    size_hint_y:None
+    height:"190dp"
+    padding:10
+    spacing:2
+
+    Label:
+        text:"Name: "+root.firstname+" "+root.lastname
+        size_hint_y:None
+        height:"30dp"
+        color:0,0,0,1
+        font_size:"16sp"
+        halign:"left"
+        text_size:self.width,None
+
+    Label:
+        text:"Email: "+root.email
+        size_hint_y:None
+        height:"30dp"
+        color:0,0,0,1
+        font_size:"16sp"
+        halign:"left"
+        text_size:self.width,None
+
+    Label:
+        text:"Role: "+root.role
+        size_hint_y:None
+        height:"30dp"
+        color:0,0,0,1
+        font_size:"16sp"
+        halign:"left"
+        text_size:self.width,None
+
+    Label:
+        text:"IP: "+root.ip
+        size_hint_y:None
+        height:"30dp"
+        color:0,0,0,1
+        font_size:"16sp"
+        halign:"left"
+        text_size:self.width,None
+
+    Button:
+        text:"ACCEPT"
+        size_hint_y:None
+        height:"45dp"
+        on_release:root.accept()

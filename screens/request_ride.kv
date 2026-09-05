@@ -1,0 +1,38 @@
+<RequestRideScreen>:
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: "40dp"
+        spacing: "20dp"
+
+        Label:
+            text: "Request Ride"
+            font_size: "32sp"
+            bold: True
+            color: 0, 0, 0, 1
+            size_hint_y: None
+            height: "50dp"
+            halign: "center"
+            valign: "middle"
+
+        Widget:
+
+        Button1:
+            text: "Request Now"
+            on_press: root.go_to("select_location")  # เปลี่ยนเป็นชื่อหน้าจอปลายทางของคุณ เช่น "map"
+
+        Button1:
+            text: "Request Later"
+            on_press: root.go_to("select_location")  # สามารถใส่ฟังก์ชันเพิ่มทีหลังได้
+
+        Widget:
+
+        Button1:
+            text: "Back"
+            on_press: root.go_to("home_customer")

@@ -109,6 +109,12 @@ def get_android_networks() -> List[Dict[str, str]]:
 
         while interfaces.hasMoreElements():
             interface = interfaces.nextElement()
+            if_name = interface.getName().lower()
+            
+            # 🛑 กรองข้ามอินเทอร์เฟซที่เป็น VPN หรือ Loopback เพื่อป้องกันการดึงวงไอพี VPN มาใช้
+            if "tun" in if_name or "ppp" in if_name or "p2p" in if_name or "vpn" in if_name:
+                continue
+
             addresses = interface.getInterfaceAddresses()
 
             for i in range(addresses.size()):
@@ -120,6 +126,9 @@ def get_android_networks() -> List[Dict[str, str]]:
 
                 ip = str(address.getHostAddress())
                 if "." not in ip:
+                    continue
+
+                if ip.startswith(("127.", "169.254.")):
                     continue
 
                 prefix = int(info.getNetworkPrefixLength())
@@ -150,10 +159,24 @@ def get_networks() -> List[Dict[str, str]]:
 
 def get_broadcast_subnets() -> set[str]:
     networks = get_networks()
-    subnets = {"255.255.255.255", "10.243.255.255", "127.0.0.1"}
+    # 📌 เพิ่ม Broadcast พื้นฐานเผื่อกรณีฉุกเฉินเพื่อให้ระบบยังพยายามยิงออกวง Wi-Fi ปกติได้
+    subnets = {
+        "255.255.255.255", 
+        "192.168.1.255", 
+        "192.168.0.255", 
+        "10.243.255.255", 
+        "127.0.0.1"
+    }
+    
     for net in networks:
-        if net.get("broadcast"):
-            subnets.add(net["broadcast"])
+        b_ip = net.get("broadcast")
+        ip = net.get("ip", "")
+        
+        if b_ip:
+            if ip.startswith("100.64."): 
+                continue
+            subnets.add(b_ip)
+            
     return subnets
 
 

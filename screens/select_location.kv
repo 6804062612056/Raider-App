@@ -1,0 +1,221 @@
+#:import MapView kivy_garden.mapview.MapView
+
+<SelectLocation>:
+    FloatLayout:
+
+        # MapView (Layer ด้านหลัง)
+        MapView:
+            id: map_view
+            zoom: 14
+            lat: 13.7563
+            lon: 100.5018
+            on_touch_up: root.on_map_touch(self, args[1])
+
+        # Floating Card แสดง Balance/Price มุมขวาบน
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: None, None
+            size: '180dp', '70dp'
+            pos_hint: {'top': 0.98, 'right': 0.95}
+            padding: ['12dp', '8dp', '12dp', '8dp']
+            spacing: '2dp'
+
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 0.95
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [14,]
+                Color:
+                    rgba: 0, 0, 0, 0.1
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, 14)
+                    width: 1
+
+            BoxLayout:
+                orientation: 'horizontal'
+                Label:
+                    text: "Balance:"
+                    font_size: "12sp"
+                    color: 0.5, 0.5, 0.5, 1
+                    halign: 'left'
+                    valign: 'middle'
+                    text_size: self.size
+                Label:
+                    text: root.current_money_text + " THB"
+                    font_size: "12sp"
+                    bold: True
+                    color: 0, 0.6, 0.2, 1
+                    halign: 'right'
+                    valign: 'middle'
+                    text_size: self.size
+
+            BoxLayout:
+                orientation: 'horizontal'
+                Label:
+                    text: "Price:"
+                    font_size: "12sp"
+                    color: 0.5, 0.5, 0.5, 1
+                    halign: 'left'
+                    valign: 'middle'
+                    text_size: self.size
+                Label:
+                    text: root.trip_price_text + " THB"
+                    font_size: "13sp"
+                    bold: True
+                    color: 0.8, 0, 0, 1
+                    halign: 'right'
+                    valign: 'middle'
+                    text_size: self.size
+
+        # Bottom Sheet แบบเปิด/พับเก็บด้วยปุ่มกด
+        BoxLayout:
+            id: bottom_panel
+            orientation: 'vertical'
+            size_hint: (1, None)
+            height: '260dp'
+            spacing: '8dp'
+            padding: ['20dp', '12dp', '20dp', '8dp']
+            pos_hint: {'x': 0, 'y': 0}
+            clip_to_bounds: True
+
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [20, 20, 0, 0]
+
+            # ข้อความแจ้งเตือน
+            Label:
+                text: root.message if root.message else "Tap on map to select locations"
+                color: (0, 0.6, 0.2, 1) if not ("error" in root.message.lower() or "select" in root.message.lower()) else (0.8, 0, 0, 1)
+                font_size: '14sp'
+                bold: True
+                size_hint_y: None
+                height: '18dp'
+                halign: 'center'
+                valign: 'middle'
+                text_size: self.width, None
+                opacity: 1 if self.parent.height > dp(90) else 0
+
+            # ปุ่ม Start
+            Button:
+                size_hint_y: None
+                height: '45dp'
+                background_normal: ''
+                background_down: ''
+                background_color: (0, 0, 0, 0)
+                opacity: 1 if self.parent.height > dp(140) else 0
+                disabled: self.opacity == 0
+                on_release: root.set_mode('start')
+
+                canvas.before:
+                    Color:
+                        rgba: (1, 0.92, 0.92, 1) if root.mode == 'start' else (0.97, 0.97, 0.97, 1)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [10,]
+                    Color:
+                        rgba: (0.8, 0, 0, 1) if root.mode == 'start' else (0.8, 0.8, 0.8, 1)
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 10)
+                        width: 1.1
+
+                    Color:
+                        rgba: (0.8, 0, 0, 1)
+                    Ellipse:
+                        pos: (self.x + dp(14), self.y + dp(16.5))
+                        size: (dp(12), dp(12))
+
+                Label:
+                    text: "Pick-up Location" if not root.start_coords else "Start Point Selected"
+                    font_size: '14sp'
+                    color: (0.2, 0.2, 0.2, 1) if root.start_coords else (0.5, 0.5, 0.5, 1)
+                    bold: True if root.mode == 'start' or root.start_coords else False
+                    pos: self.parent.pos
+                    size: self.parent.size
+                    padding: [dp(38), 0, 0, 0]
+                    halign: 'left'
+                    valign: 'middle'
+
+            # ปุ่ม Destination
+            Button:
+                size_hint_y: None
+                height: '45dp'
+                background_normal: ''
+                background_down: ''
+                background_color: (0, 0, 0, 0)
+                opacity: 1 if self.parent.height > dp(190) else 0
+                disabled: self.opacity == 0
+                on_release: root.set_mode('destination')
+
+                canvas.before:
+                    Color:
+                        rgba: (0.92, 1, 0.92, 1) if root.mode == 'destination' else (0.97, 0.97, 0.97, 1)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [10,]
+                    Color:
+                        rgba: (0, 0.6, 0, 1) if root.mode == 'destination' else (0.8, 0.8, 0.8, 1)
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 10)
+                        width: 1.1
+
+                    Color:
+                        rgba: (0, 0.6, 0, 1)
+                    Ellipse:
+                        pos: (self.x + dp(14), self.y + dp(16.5))
+                        size: (dp(12), dp(12))
+
+                Label:
+                    text: "Where to?" if not root.dest_coords else "Destination Selected"
+                    font_size: '14sp'
+                    color: (0.2, 0.2, 0.2, 1) if root.dest_coords else (0.5, 0.5, 0.5, 1)
+                    bold: True if root.mode == 'destination' or root.dest_coords else False
+                    pos: self.parent.pos
+                    size: self.parent.size
+                    padding: [dp(38), 0, 0, 0]
+                    halign: 'left'
+                    valign: 'middle'
+
+            # ปุ่ม Confirm Route
+            Button:
+                text: 'Confirm Route'
+                bold: True
+                font_size: '15sp'
+                size_hint_y: None
+                height: '48dp'
+                background_normal: ''
+                background_down: ''
+                background_color: (0, 0, 0, 0)
+                opacity: 1 if self.parent.height > dp(240) else 0
+                disabled: not (root.start_coords and root.dest_coords) or self.opacity == 0
+                on_release: root.confirm_route()
+
+                canvas.before:
+                    Color:
+                        rgba: (0.85, 0.85, 0.85, 1) if self.disabled else (0.2, 0.2, 0.2, 1)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12,]
+
+                color: (0.55, 0.55, 0.55, 1) if self.disabled else (1, 1, 1, 1)
+
+            # ปุ่มใหม่: กดเพื่อเปิด / ซ่อน แถบเมนู (สร้างไว้ด้านล่างสุด โผล่ตลอดเวลา)
+            Button:
+                text: "▲ Show Menu" if root.is_collapsed else "▼ Hide Menu"
+                font_size: '12sp'
+                bold: True
+                color: (0.4, 0.4, 0.4, 1)
+                size_hint_y: None
+                height: '28dp'
+                background_normal: ''
+                background_down: ''
+                background_color: (0, 0, 0, 0)
+                on_release: root.toggle_sheet()

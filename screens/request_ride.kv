@@ -1,0 +1,47 @@
+<RequestRideScreen>:
+    FloatLayout:
+        # Layer 1: รูปภาพพื้นหลัง bg2.jpg
+        Image:
+            source: 'images/bg2.jpg'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: (1, 1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+        # Layer 2: เนื้อหาหลัก
+        BoxLayout:
+            orientation: "vertical"
+            padding: "40dp"
+            spacing: "20dp"
+
+            Label:
+                text: "Request Ride"
+                font_size: "32sp"
+                bold: True
+                color: 0, 0, 0, 1
+                size_hint_y: None
+                height: "50dp"
+                halign: "center"
+                valign: "middle"
+
+            Widget:
+                size_hint_y: 0.2
+
+            Button1:
+                text: "Request Now"
+                on_press: root.go_to("select_location")
+
+            Button1:
+                text: "Request Later"
+                on_press: root.go_to("select_location")
+
+            Widget:
+                size_hint_y: 0.2
+
+            Button1:
+                text: "Back"
+                on_press: root.go_to("home_customer")
+
+            # ดันกลุ่มปุ่มขึ้นด้านบน
+            Widget:
+                size_hint_y: 0.4

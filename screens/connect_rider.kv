@@ -1,0 +1,82 @@
+<Connect2>:
+    FloatLayout:
+        # Layer 1: รูปภาพพื้นหลัง bg2.jpg
+        Image:
+            source: 'images/bg2.jpg'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: (1, 1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+        # Layer 2: เนื้อหาหลัก
+        BoxLayout:
+            orientation: "vertical"
+            padding: ["24dp", "36dp", "24dp", "10dp"]
+            spacing: "10dp"
+
+            Label:
+                text: "Available Customers"
+                size_hint_y: None
+                height: "40dp"
+                font_size: "26sp"
+                bold: True
+                color: 0.1, 0.1, 0.1, 1
+
+            Label:
+                text: root.result_text
+                size_hint_y: None
+                height: "30dp"
+                font_size: "16sp"
+                bold: True
+                color: 0, 0.5, 0.2, 1
+
+            # รายการแสดง Customer แบบ Scrollable
+            ScrollView:
+                do_scroll_x: False
+
+                GridLayout:
+                    id: customer_list
+                    cols: 1
+                    spacing: 12
+                    padding: ["4dp", "8dp", "4dp", "8dp"]
+                    size_hint_y: None
+                    height: self.minimum_height
+
+            # สถานะ Real-time ด้านล่าง
+            Label:
+                text: root.subnets_text
+                size_hint_y: None
+                height: "30dp"
+                font_size: "12sp"
+                color: 0.4, 0.4, 0.4, 1
+                text_size: self.width, None
+                halign: "center"
+                valign: "middle"
+
+            # ปุ่ม Back ทรงแคปซูลสีเหลือง กึ่งกลางล่าง
+            AnchorLayout:
+                anchor_x: "center"
+                anchor_y: "bottom"
+                size_hint_y: None
+                height: "70dp"
+                padding: ["0dp", "0dp", "0dp", "15dp"]
+
+                Button:
+                    text: "Back"
+                    font_size: "16sp"
+                    bold: True
+                    color: 0.12, 0.16, 0.22, 1
+                    size_hint: None, None
+                    size: "280dp", "48dp"
+                    background_normal: ''
+                    background_down: ''
+                    background_color: 0, 0, 0, 0
+                    on_press: root.go_to("home_rider")
+
+                    canvas.before:
+                        Color:
+                            rgba: (1, 0.78, 0, 1) if self.state == 'normal' else (0.9, 0.7, 0, 1)
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [24,]

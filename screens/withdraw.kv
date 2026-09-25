@@ -1,0 +1,109 @@
+<WithdrawScreen>:
+    FloatLayout:
+        # Layer 1: รูปภาพพื้นหลัง bg2.jpg
+        Image:
+            source: 'images/bg2.jpg'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: (1, 1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+        # Layer 2: เนื้อหาหลัก
+        BoxLayout:
+            orientation: "vertical"
+            padding: ["30dp", "40dp", "30dp", "20dp"]
+            spacing: "10dp"
+
+            Label:
+                text: "WITHDRAW"
+                font_size: "28sp"
+                bold: True
+                color: 0.1, 0.1, 0.1, 1
+                size_hint_y: None
+                height: "40dp"
+
+            Widget:
+                size_hint_y: None
+                height: "10dp"
+
+            # ============================================================
+            #  BALANCE CARD (กล่องแสดงยอดเงินสไตล์ดีไซน์ใหม่)
+            # ============================================================
+            BoxLayout:
+                orientation: "vertical"
+                size_hint: (1, None)
+                height: "85dp"
+                padding: ["20dp", "12dp", "20dp", "12dp"]
+                spacing: "4dp"
+
+                # วาดการ์ดสีขาวมนโปร่งแสง
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 0.9  # สีขาวมุก
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [18,]
+                    Color:
+                        rgba: 0.85, 0.85, 0.85, 0.8  # เส้นขอบบางๆ
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 18)
+                        width: 1.0
+
+                Label:
+                    text: "Balance"
+                    font_size: "14sp"
+                    color: 0.5, 0.5, 0.5, 1
+                    size_hint_y: None
+                    height: "18dp"
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.width, None
+
+                Label:
+                    text: "฿ " + root.money
+                    font_size: "24sp"
+                    bold: True
+                    color: 0, 0.6, 0.2, 1  # สีเขียวพรีเมียม
+                    size_hint_y: None
+                    height: "32dp"
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.width, None
+
+            # ดันกลุ่ม Input และปุ่ม Withdraw ให้ลงมาอยู่ตรงกลาง
+            Widget:
+                size_hint_y: 0.3
+
+            Input1:
+                id: amount_input
+                hint_text: "Amount to withdraw"
+                multiline: False
+                input_filter: "float"
+
+            Label:
+                text: root.message
+                color: (0, 0.5, 0, 1) if "Successfully" in root.message else (1, 0, 0, 1)
+                font_size: "14sp"
+                size_hint_y: None
+                height: "20dp"
+                halign: "left"
+                text_size: self.width, None
+
+            Widget:
+                size_hint_y: 0.025
+
+            Button1:
+                text: "Withdraw"
+                on_press: root.process_withdraw(amount_input.text)
+
+            # ดันปุ่ม Back ลงไปอยู่ด้านล่างสุด
+            Widget:
+                size_hint_y: 0.4
+
+            Button1:
+                text: "Back"
+                on_press: root.go_to("home_rider")
+
+            Widget:
+                size_hint_y: 0.1

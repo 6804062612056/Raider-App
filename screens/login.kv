@@ -1,0 +1,98 @@
+#:import dp kivy.metrics.dp
+
+<Login>:
+    FloatLayout:
+        # Layer 1: รูปภาพพื้นหลัง
+        Image:
+            source: 'images/bg.jpg'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: (1, 1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+        # Layer 2: ฟอร์ม Login วางซ้อนด้านบน
+        BoxLayout:
+            orientation: "vertical"
+            padding: [dp(36), dp(20), dp(36), dp(20)]
+            spacing: dp(10)
+
+            Widget:
+                size_hint_y: 0.15
+
+            Label:
+                text: "LOGIN"
+                font_size: "40sp"
+                bold: True
+                color: 0.1, 0.1, 0.1, 1
+                size_hint_y: None
+                height: dp(40)
+
+            Widget:
+                size_hint_y: 0.08
+
+            Input1:
+                id: email
+                hint_text: "Email"
+                on_text: root.check_form()
+
+            Input1:
+                id: password
+                hint_text: "Password"
+                on_text: root.check_form()
+
+            Label:
+                text: root.error_message
+                color: 0.9, 0.2, 0.2, 1
+                font_size: "13sp"
+                size_hint_y: None
+                height: dp(20)
+                halign: "left"
+                valign: "middle"
+                text_size: self.width, None
+
+            Widget:
+                size_hint_y: 0.025
+
+            Button1:
+                text: "Login"
+                on_press: root.login_button()
+                disabled: not root.form_valid
+
+            Button:
+                text: "Register?"
+                color: 0.2, 0.2, 0.2, 1
+                font_size: "18sp"
+                bold: True
+                size_hint_y: None
+                height: dp(36)
+                background_normal: ""
+                background_down: ""
+                background_color: 0, 0, 0, 0
+                on_press: root.go_to("select_register")
+
+            Widget:
+                size_hint_y: 0.25
+
+    # ปุ่ม Data มุมซ้ายล่าง
+    AnchorLayout:
+        anchor_x: "left"
+        anchor_y: "bottom"
+
+        Button:
+            text: "Data"
+            size_hint: None, None
+            size: dp(80), dp(38)
+            background_normal: ""
+            background_down: ""
+            background_color: 0, 0, 0, 0
+            color: 1, 1, 1, 1
+            bold: True
+            font_size: "12sp"
+            on_press: root.go_to("user_list")
+            canvas.before:
+                Color:
+                    rgba: 0.12, 0.12, 0.12, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [0, 14, 0, 0]

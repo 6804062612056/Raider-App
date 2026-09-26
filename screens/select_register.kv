@@ -1,0 +1,30 @@
+#:import dp kivy.metrics.dp
+
+<SelectRegister>:
+    FloatLayout:
+        # Layer 1: รูปภาพพื้นหลัง
+        Image:
+            source: 'images/bg.jpg'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: (1, 1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+        # Layer 2: ปุ่มเลือกประเภทการลงทะเบียน
+        BoxLayout:
+            orientation: "vertical"
+            padding: [dp(40), dp(0), dp(40), dp(0)]
+            spacing: dp(48)
+            size_hint: (1, None)
+            height: self.minimum_height
+            pos_hint: {'center_x': 0.5, 'center_y': 0.56}
+
+            Button1:
+                text: "Register Customer"
+                height: dp(68)  # <-- เพิ่มความสูงของปุ่ม (จากเดิมใน custom_widgets คือ 56dp)
+                on_press: root.go_register("customer")
+
+            Button1:
+                text: "Register Rider"
+                height: dp(68)  # <-- เพิ่มความสูงของปุ่ม
+                on_press: root.go_register("rider")

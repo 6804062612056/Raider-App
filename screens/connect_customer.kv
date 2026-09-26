@@ -1,0 +1,106 @@
+<Connect1>:
+    FloatLayout:
+        # 1. ภาพพื้นหลัง bg2 เต็มหน้าจอ
+        Image:
+            source: 'images/bg2.jpg'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+            pos_hint: {'x': 0, 'y': 0}
+
+        # 2. การ์ดแสดงสถานะ (ขยับขึ้นสูงเหนือจุดศูนย์กลาง)
+        BoxLayout:
+            orientation: "vertical"
+            size_hint: None, None
+            size: "320dp", "210dp"
+            padding: ["24dp", "20dp", "24dp", "20dp"]
+            spacing: "4dp"  # ลดระยะห่างระหว่าง Element ในการ์ดลง
+            pos_hint: {'center_x': 0.5, 'center_y': 0.58}
+
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 0.92
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [20,]
+                Color:
+                    rgba: 0, 0, 0, 0.08
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, 20)
+                    width: 1.2
+
+            # ดันจุดกระเด้งลงมาด้านล่าง
+            Widget:
+                size_hint_y: 1
+
+            # โซนจุด 3 จุดกระเด้ง (ปรับตำแหน่งลงมาใกล้ข้อความมากขึ้น)
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: None, None
+                size: "80dp", "28dp"
+                pos_hint: {'center_x': 0.5}
+                spacing: "8dp"
+
+                Label:
+                    id: dot1
+                    text: "•"
+                    font_size: "38sp"
+                    bold: True
+                    color: 0.8, 0, 0, 1
+
+                Label:
+                    id: dot2
+                    text: "•"
+                    font_size: "38sp"
+                    bold: True
+                    color: 0.8, 0.8, 0, 1
+
+                Label:
+                    id: dot3
+                    text: "•"
+                    font_size: "38sp"
+                    bold: True
+                    color: 0, 0.8, 0, 1
+
+            # ข้อความแสดงสถานะหลัก
+            Label:
+                text: root.result_text if root.result_text else "Waiting for Rider..."
+                font_size: "18sp"
+                bold: True
+                color: 0.15, 0.15, 0.15, 1
+                halign: "center"
+                valign: "middle"
+                size_hint_y: None
+                height: "40dp"
+                text_size: self.width, None
+
+            # Spacer สำหรับระยะขอบล่างของการ์ด
+            Widget:
+                size_hint_y: 0.5
+
+        # 3. ปุ่ม Back ทรงแคปซูลสีเหลือง กึ่งกลางด้านล่าง
+        AnchorLayout:
+            anchor_x: "center"
+            anchor_y: "bottom"
+            padding: ["24dp", "24dp", "24dp", "60dp"]
+
+            Button:
+                text: "Back"
+                font_size: "16sp"
+                bold: True
+                color: 0.12, 0.16, 0.22, 1
+                size_hint: None, None
+                size: "280dp", "50dp"
+                background_normal: ''
+                background_down: ''
+                background_color: 0, 0, 0, 0
+                on_release: root.go_to("home_customer")
+
+                canvas.before:
+                    Color:
+                        rgba: 1, 0.78, 0, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [25,]

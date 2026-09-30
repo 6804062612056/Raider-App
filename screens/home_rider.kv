@@ -1,0 +1,121 @@
+<Home2>:
+    FloatLayout:
+        # Layer 1: รูปภาพพื้นหลัง bg2.jpg
+        Image:
+            source: 'images/bg2.jpg'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: (1, 1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+        # Layer 2: เนื้อหาหลัก
+        BoxLayout:
+            orientation: "vertical"
+            padding: ["30dp", "40dp", "30dp", "20dp"]
+            spacing: "15dp"
+
+            # Header
+            Label:
+                text: "RIDER HOME"
+                font_size: "30sp"
+                bold: True
+                color: 0.1, 0.1, 0.1, 1
+                size_hint_y: None
+                height: "40dp"
+
+            # ดันเฉพาะกล่องชื่อและยอดเงินลงมานิดเดียว
+            Widget:
+                size_hint_y: None
+                height: "15dp"
+
+            # ============================================================
+            #  PROFILE & BALANCE CARD (กล่องแสดงข้อมูลชื่อและยอดเงิน)
+            # ============================================================
+            BoxLayout:
+                orientation: "vertical"
+                size_hint: (1, None)
+                height: "120dp"
+                padding: ["20dp", "16dp", "20dp", "16dp"]
+                spacing: "8dp"
+
+                # วาดการ์ดสีขาวมนโปร่งแสงนิดๆ
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 0.9  # สีขาวมุก
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [18,]
+                    Color:
+                        rgba: 0.85, 0.85, 0.85, 0.8  # เส้นขอบบางๆ
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 18)
+                        width: 1.0
+
+                # แสดงชื่อผู้ใช้
+                Label:
+                    text: root.firstname + " " + root.lastname
+                    font_size: "18sp"
+                    bold: True
+                    color: 0.15, 0.15, 0.15, 1
+                    size_hint_y: None
+                    height: "26dp"
+                    halign: "left"
+                    valign: "middle"
+                    text_size: self.width, None
+
+                # เส้นแบ่งแถบ
+                Widget:
+                    size_hint_y: None
+                    height: "1dp"
+                    canvas.before:
+                        Color:
+                            rgba: 0.9, 0.9, 0.9, 1
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+
+                # แสดง Balance ยอดเงิน
+                BoxLayout:
+                    orientation: "horizontal"
+                    size_hint_y: None
+                    height: "32dp"
+
+                    Label:
+                        text: "Balance"
+                        font_size: "14sp"
+                        color: 0.5, 0.5, 0.5, 1
+                        halign: "left"
+                        valign: "middle"
+                        text_size: self.width, None
+
+                    Label:
+                        text: "฿ " + root.money
+                        font_size: "20sp"
+                        bold: True
+                        color: 0, 0.6, 0.2, 1  # สีเขียว
+                        halign: "right"
+                        valign: "middle"
+                        text_size: self.width, None
+
+            Widget:
+                size_hint_y: 0.15
+
+            # ปุ่มจัดการต่าง ๆ
+            Button1:
+                text: "Start Job"
+                on_press: root.go_to("connect_rider")
+
+            Button1:
+                text: "Withdraw"
+                on_press: root.go_to("withdraw")
+
+            Widget:
+                size_hint_y: 0.15
+
+            Button1:
+                text: "Logout"
+                on_press: root.logout()
+
+            Widget:
+                size_hint_y: 0.3

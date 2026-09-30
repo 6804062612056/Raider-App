@@ -1,0 +1,165 @@
+<RideFeeScreen>:
+    FloatLayout:
+        # Layer 1: รูปภาพพื้นหลัง bg2.jpg
+        Image:
+            source: 'images/bg2.jpg'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: (1, 1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+        # Layer 2: เนื้อหาหลัก
+        BoxLayout:
+            orientation: "vertical"
+            padding: ["24dp", "36dp", "24dp", "24dp"]
+            spacing: "16dp"
+
+            # --- Title ---
+            Label:
+                text: "Ride Fee"
+                font_size: "28sp"
+                bold: True
+                color: 0.1, 0.1, 0.1, 1
+                size_hint_y: None
+                height: "40dp"
+                halign: "center"
+                valign: "middle"
+
+            # --- Map View (ย่อมุมมนสวยงาม) ---
+            Widget:
+                size_hint: (1, None)
+                height: "220dp"
+
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [16,]
+
+                StaticMapView:
+                    id: map_view
+                    pos: self.parent.pos
+                    size: self.parent.size
+                    lat: 13.738288
+                    lon: 100.532340
+                    zoom: 13
+
+            # --- Summary Card (แสดง Distance / Fee / Balance) ---
+            BoxLayout:
+                orientation: "vertical"
+                size_hint: (1, None)
+                height: "150dp"
+                padding: ["20dp", "16dp", "20dp", "16dp"]
+                spacing: "10dp"
+
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 0.92  # สีขาวมุกโปร่งแสง
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [18,]
+                    Color:
+                        rgba: 0.85, 0.85, 0.85, 0.8  # เส้นขอบบางๆ
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 18)
+                        width: 1.0
+
+                # Distance Row
+                BoxLayout:
+                    size_hint_y: None
+                    height: "24dp"
+                    Label:
+                        text: "Distance"
+                        font_size: "15sp"
+                        color: 0.4, 0.4, 0.4, 1
+                        halign: "left"
+                        valign: "middle"
+                        text_size: self.width, None
+                    Label:
+                        text: root.distance_text
+                        font_size: "15sp"
+                        bold: True
+                        color: 0.1, 0.1, 0.1, 1
+                        halign: "right"
+                        valign: "middle"
+                        text_size: self.width, None
+
+                # Ride Fee Row
+                BoxLayout:
+                    size_hint_y: None
+                    height: "26dp"
+                    Label:
+                        text: "Ride Fee"
+                        font_size: "15sp"
+                        bold: True
+                        color: 0.2, 0.2, 0.2, 1
+                        halign: "left"
+                        valign: "middle"
+                        text_size: self.width, None
+                    Label:
+                        text: root.ride_fee_text
+                        font_size: "18sp"
+                        bold: True
+                        color: 0, 0.6, 0.2, 1  # สีเขียวสดใส
+                        halign: "right"
+                        valign: "middle"
+                        text_size: self.width, None
+
+                # เส้นแบ่งรายการ
+                Widget:
+                    size_hint_y: None
+                    height: "1dp"
+                    canvas.before:
+                        Color:
+                            rgba: 0.9, 0.9, 0.9, 1
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+
+                # Balance Row
+                BoxLayout:
+                    size_hint_y: None
+                    height: "24dp"
+                    Label:
+                        text: "Balance"
+                        font_size: "15sp"
+                        color: 0.4, 0.4, 0.4, 1
+                        halign: "left"
+                        valign: "middle"
+                        text_size: self.width, None
+                    Label:
+                        text: root.balance_text
+                        font_size: "15sp"
+                        bold: True
+                        color: 0.1, 0.1, 0.1, 1
+                        halign: "right"
+                        valign: "middle"
+                        text_size: self.width, None
+
+            # Spacer ดันปุ่มลงด้านล่าง
+            Widget:
+                size_hint_y: 1
+
+            # --- Continue Button (สีเหลืองสดทรงแคปซูล) ---
+            Button:
+                text: "Continue"
+                font_size: "16sp"
+                bold: True
+                color: 0.12, 0.16, 0.22, 1
+                size_hint: (1, None)
+                height: "50dp"
+                background_normal: ''
+                background_down: ''
+                background_color: 0, 0, 0, 0
+                on_release: root.on_continue()
+
+                canvas.before:
+                    Color:
+                        rgba: (1, 0.78, 0, 1) if self.state == 'normal' else (0.9, 0.7, 0, 1)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [25,]

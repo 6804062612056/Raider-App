@@ -1,0 +1,49 @@
+<UserList>:
+    canvas.before:
+        Color:
+            rgba: 0.95, 0.95, 0.95, 1  # ปรับพื้นหลังเป็นสีเทาอ่อนเพื่อให้เห็นขอบเขตชัดเจนขึ้น
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+
+        Label:
+            text: "Users"
+            size_hint_y: None
+            height: "50dp"
+            font_size: "24sp"
+            bold: True
+            color: 0, 0, 0, 1
+
+        ScrollView:
+            GridLayout:
+                id: user_container
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: "15dp"  # เว้นระยะห่างระหว่าง User แต่ละคน
+                padding: ["10dp", "10dp", "10dp", "60dp"]  # เพิ่ม padding ล่างกันปุ่ม Back/Map บัง
+
+    AnchorLayout:
+        anchor_x: "left"
+        anchor_y: "bottom"
+        padding: "10dp"
+
+        Button:
+            text: "Back"
+            size_hint: None, None
+            size: "80dp", "40dp"
+            on_press: root.go_to("login")
+
+    AnchorLayout:
+        anchor_x: "right"
+        anchor_y: "bottom"
+        padding: "10dp"
+
+        Button:
+            text: "Map"
+            size_hint: None, None
+            size: "80dp", "40dp"
+            on_press: root.go_to("map")

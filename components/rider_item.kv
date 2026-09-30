@@ -1,0 +1,102 @@
+<RiderItem>:
+    orientation: "vertical"
+    size_hint_y: None
+    height: "210dp"
+    padding: ["16dp", "16dp", "16dp", "16dp"]
+    spacing: "4dp"
+
+    # การ์ดสีขาวมุก มนขอบ เงาบางๆ สไตล์ Glassmorphic
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 0.95
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [18,]
+        Color:
+            rgba: 0.9, 0.9, 0.9, 1
+        Line:
+            rounded_rectangle: (self.x, self.y, self.width, self.height, 18)
+            width: 1.0
+
+    # ข้อมูล Name & Rating
+    BoxLayout:
+        orientation: "horizontal"
+        size_hint_y: None
+        height: "28dp"
+        
+        Label:
+            text: root.firstname + " " + root.lastname
+            font_size: "16sp"
+            bold: True
+            color: 0.1, 0.1, 0.1, 1
+            halign: "left"
+            valign: "middle"
+            text_size: self.width, None
+
+        Label:
+            text: "⭐ 4.0"  # สามารถเปลี่ยนเป็น root.rating ได้
+            font_size: "14sp"
+            bold: True
+            color: 0.9, 0.6, 0, 1
+            halign: "right"
+            valign: "middle"
+            text_size: self.width, None
+
+    # ข้อมูล Email
+    Label:
+        text: "Email: " + root.email
+        size_hint_y: None
+        height: "22dp"
+        color: 0.4, 0.4, 0.4, 1
+        font_size: "13sp"
+        halign: "left"
+        valign: "middle"
+        text_size: self.width, None
+
+    # ข้อมูล Role
+    Label:
+        text: "Role: " + root.role
+        size_hint_y: None
+        height: "22dp"
+        color: 0.4, 0.4, 0.4, 1
+        font_size: "13sp"
+        halign: "left"
+        valign: "middle"
+        text_size: self.width, None
+
+    # ข้อมูล IP
+    Label:
+        text: "IP: " + root.ip
+        size_hint_y: None
+        height: "22dp"
+        color: 0.5, 0.5, 0.5, 1
+        font_size: "12sp"
+        halign: "left"
+        valign: "middle"
+        text_size: self.width, None
+
+    Widget:
+        size_hint_y: None
+        height: "8dp"
+
+    # ปุ่ม ACCEPT สีเหลืองทรงแคปซูล
+    Button:
+        text: "ACCEPT"
+        font_size: "15sp"
+        bold: True
+        color: 0.12, 0.16, 0.22, 1
+        size_hint_y: None
+        height: "44dp"
+        background_normal: ''
+        background_down: ''
+        background_color: 0, 0, 0, 0
+        on_release: root.accept()
+
+        canvas.before:
+            Color:
+                rgba: (1, 0.78, 0, 1) if self.state == 'normal' else (0.9, 0.7, 0, 1)
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [22,]

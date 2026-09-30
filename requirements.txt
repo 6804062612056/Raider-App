@@ -1,0 +1,4 @@
+kivy
+kivy-garden.mapview
+pyjnius
+requests
